@@ -51,48 +51,59 @@ class UserController {
     }
 
     public function actionUpdate(): string {
-        if(User::exists($_GET['id'])) {
+        if (isset($_GET['id']) && User::exists($_GET['id'])) {
             $user = new User();
             $user->setUserId($_GET['id']);
-            
+
             $arrayData = [];
-
-            if(isset($_GET['name']))
-                $arrayData['user_name'] = $_GET['name'];
-
-            if(isset($_GET['lastname'])) {
-                $arrayData['user_lastname'] = $_GET['lastname'];
+    
+            if (isset($_GET['name'])) {
+                $arrayData['user_name'] = htmlspecialchars($_GET['name']);
             }
-            
-            $user->updateUser($arrayData);
-        }
-        else {
+    
+            if (isset($_GET['lastname'])) {
+                $arrayData['user_lastname'] = htmlspecialchars($_GET['lastname']);
+            }
+    
+            if (!empty($arrayData)) {
+                $user->updateUser($arrayData);
+            }
+    
+            $render = new Render();
+            return $render->renderPage(
+                'user-updated.twig', 
+                [
+                    'title' => 'Пользователь обновлен',
+                    'message' => "Обновлен пользователь с ID: " . $user->getUserId()
+                ]
+            );
+        } else {
             throw new \Exception("Пользователь не существует");
         }
-
-        $render = new Render();
-        return $render->renderPage(
-            'user-created.twig', 
-            [
-                'title' => 'Пользователь обновлен',
-                'message' => "Обновлен пользователь с id " . $user->getUserId()
-            ]);
     }
+    
 
     public function actionDelete(): string {
-        if(User::exists($_GET['id'])) {
-            User::deleteFromStorage($_GET['id']);
+        if (isset($_GET['id'])) {
+            $userId = $_GET['id'];
 
-            $render = new Render();
-            
-            return $render->renderPage(
-                'user-removed.twig', []
-            );
-        }
-        else {
-            throw new \Exception("Пользователь не существует");
+            if (User::exists($userId)) {
+                User::deleteFromStorage($userId);
+    
+                $render = new Render();
+                return $render->renderPage(
+                    'user-removed.twig', 
+                    [
+                        'title' => 'Пользователь удален',
+                        'message' => "Пользователь с ID $userId был удален."
+                    ]
+                );
+            } else {
+                throw new \Exception("Пользователь с ID $userId не существует");
+            }
+        } else {
+            throw new \Exception("Не указан ID пользователя");
         }
     }
-
     
 }
