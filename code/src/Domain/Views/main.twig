@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/src/styles/style.css">
+        <title>{{ title }}</title>
+    </head>
+    <body>
+        <header class="header">
+            <h1 class="title">Учебный сайт</h1>
+        </header>
+         <nav class="sidebar">
+            <ul>
+                <li><a href="/" class="main-page">Главная</a></li>
+                <li><a href="/user" class="user-page">Пользователи</a></li>
+                <li><a href="about" class="about-page">О нас</a></li>
+            </ul>
+        </nav>
+        <div class="content">
+            {% include content_template_name %}
+        </div>
+        <footer class="footer-content">
+            <p>&copy; 2024 Мой сайт. Все права защищены.</p>
+        </footer>
+    </body>
+</html>
